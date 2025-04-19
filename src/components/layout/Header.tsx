@@ -5,11 +5,23 @@ import { Input } from "@/components/ui/input";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 
 const Header: React.FC = () => {
   const { itemCount, toggleCart } = useCart();
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    const checkAdminStatus = async () => {
+      if (user) {
+        const { data } = await supabase.rpc('has_role', { role: 'admin' });
+        setIsAdmin(data);
+      }
+    };
+    checkAdminStatus();
+  }, [user]);
   
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background">
@@ -54,6 +66,17 @@ const Header: React.FC = () => {
             )}
             <span className="sr-only">Open cart</span>
           </Button>
+
+          {isAdmin && (
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="hidden md:inline-flex"
+              onClick={() => navigate('/admin')}
+            >
+              Admin Panel
+            </Button>
+          )}
 
           {user ? (
             <Button 
