@@ -1,6 +1,6 @@
-
 import React from "react";
 import { Separator } from "@/components/ui/separator";
+import { Link } from "react-router-dom";
 
 const Footer: React.FC = () => {
   return (
@@ -17,30 +17,28 @@ const Footer: React.FC = () => {
           <div>
             <h4 className="font-medium mb-4">Shop</h4>
             <ul className="space-y-2 text-sm">
-              <li><a href="/categories" className="text-muted-foreground hover:text-primary">Categories</a></li>
-              <li><a href="/category/fruits" className="text-muted-foreground hover:text-primary">Fruits</a></li>
-              <li><a href="/category/vegetables" className="text-muted-foreground hover:text-primary">Vegetables</a></li>
-              <li><a href="/category/dairy" className="text-muted-foreground hover:text-primary">Dairy & Eggs</a></li>
+              <li><Link to="/categories" className="text-muted-foreground hover:text-primary">Categories</Link></li>
+              <li><Link to="/category/fruits" className="text-muted-foreground hover:text-primary">Fruits</Link></li>
+              <li><Link to="/category/vegetables" className="text-muted-foreground hover:text-primary">Vegetables</Link></li>
+              <li><Link to="/category/dairy" className="text-muted-foreground hover:text-primary">Dairy & Eggs</Link></li>
             </ul>
           </div>
           
           <div>
             <h4 className="font-medium mb-4">Company</h4>
             <ul className="space-y-2 text-sm">
-              <li><a href="/about" className="text-muted-foreground hover:text-primary">About Us</a></li>
-              <li><a href="/contact" className="text-muted-foreground hover:text-primary">Contact</a></li>
-              <li><a href="/careers" className="text-muted-foreground hover:text-primary">Careers</a></li>
-              <li><a href="/blog" className="text-muted-foreground hover:text-primary">Blog</a></li>
+              <li><Link to="/about" className="text-muted-foreground hover:text-primary">About Us</Link></li>
+              <li><Link to="/contact" className="text-muted-foreground hover:text-primary">Contact</Link></li>
+              <li><Link to="/faq" className="text-muted-foreground hover:text-primary">FAQ</Link></li>
+              <li><Link to="/privacy" className="text-muted-foreground hover:text-primary">Privacy Policy</Link></li>
             </ul>
           </div>
           
           <div>
-            <h4 className="font-medium mb-4">Help</h4>
+            <h4 className="font-medium mb-4">Account</h4>
             <ul className="space-y-2 text-sm">
-              <li><a href="/faq" className="text-muted-foreground hover:text-primary">FAQ</a></li>
-              <li><a href="/shipping" className="text-muted-foreground hover:text-primary">Shipping</a></li>
-              <li><a href="/returns" className="text-muted-foreground hover:text-primary">Returns</a></li>
-              <li><a href="/privacy" className="text-muted-foreground hover:text-primary">Privacy Policy</a></li>
+              <li><Link to="/profile" className="text-muted-foreground hover:text-primary">My Profile</Link></li>
+              <li><Link to="/checkout" className="text-muted-foreground hover:text-primary">Checkout</Link></li>
             </ul>
           </div>
         </div>

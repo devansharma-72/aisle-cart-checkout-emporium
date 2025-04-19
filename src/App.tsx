@@ -15,6 +15,11 @@ import Checkout from "./pages/Checkout";
 import OrderConfirmation from "./pages/OrderConfirmation";
 import AuthPage from "./pages/AuthPage";
 import AdminPanel from "./pages/AdminPanel";
+import Profile from "./pages/Profile";
+import AboutUs from "./pages/AboutUs";
+import Contact from "./pages/Contact";
+import FAQ from "./pages/FAQ";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 
 const queryClient = new QueryClient();
 
@@ -35,6 +40,11 @@ const App = () => (
               <Route path="/checkout" element={<Checkout />} />
               <Route path="/order-confirmation" element={<OrderConfirmation />} />
               <Route path="/admin" element={<AdminPanel />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/about" element={<AboutUs />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/faq" element={<FAQ />} />
+              <Route path="/privacy" element={<PrivacyPolicy />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </TooltipProvider>
