@@ -59,16 +59,39 @@ const AdminPanel = () => {
       return;
     }
 
-    setProducts(data);
+    // Map database fields to our Product type
+    const mappedProducts: Product[] = data.map(item => ({
+      id: item.id,
+      name: item.name,
+      description: item.description || '',
+      price: item.price,
+      imageUrl: item.image_url || '',
+      category: item.category,
+      inStock: item.in_stock || false,
+      weight: item.weight || '',
+    }));
+
+    setProducts(mappedProducts);
     setIsLoading(false);
   };
 
   const handleProductSave = async (productData: Omit<Product, 'id'>, id?: string) => {
+    // Map our Product type fields to database fields
+    const dbData = {
+      name: productData.name,
+      description: productData.description,
+      price: productData.price,
+      image_url: productData.imageUrl,
+      category: productData.category,
+      in_stock: productData.inStock,
+      weight: productData.weight
+    };
+
     if (id) {
       // Update existing product
       const { error } = await supabase
         .from('products')
-        .update(productData)
+        .update(dbData)
         .eq('id', id);
 
       if (error) {
@@ -83,7 +106,7 @@ const AdminPanel = () => {
       // Create new product
       const { error } = await supabase
         .from('products')
-        .insert([productData]);
+        .insert([dbData]);
 
       if (error) {
         toast({
