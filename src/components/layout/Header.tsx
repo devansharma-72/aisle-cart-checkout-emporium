@@ -1,12 +1,15 @@
-
 import React from "react";
 import { ShoppingCart, Menu, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useCart } from "@/contexts/CartContext";
+import { useAuth } from "@/contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const Header: React.FC = () => {
   const { itemCount, toggleCart } = useCart();
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
   
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background">
@@ -52,9 +55,25 @@ const Header: React.FC = () => {
             <span className="sr-only">Open cart</span>
           </Button>
 
-          <Button variant="default" size="sm" className="hidden md:inline-flex">
-            Sign In
-          </Button>
+          {user ? (
+            <Button 
+              variant="default" 
+              size="sm" 
+              className="hidden md:inline-flex"
+              onClick={() => signOut()}
+            >
+              Sign Out
+            </Button>
+          ) : (
+            <Button 
+              variant="default" 
+              size="sm" 
+              className="hidden md:inline-flex"
+              onClick={() => navigate('/auth')}
+            >
+              Sign In
+            </Button>
+          )}
         </div>
       </div>
     </header>
