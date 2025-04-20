@@ -3,8 +3,11 @@ import React from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import MainLayout from "@/components/layout/MainLayout";
 import ProductCard from "@/components/products/ProductCard";
-import { PRODUCTS, CATEGORIES } from "@/data/mockData";
+import { CATEGORIES } from "@/data/mockData";
 import { Button } from "@/components/ui/button";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import type { Product } from "@/types/grocery";
 
 const CategoryPage = () => {
   const { categoryId } = useParams<{ categoryId: string }>();
@@ -13,8 +16,31 @@ const CategoryPage = () => {
   // Find the category
   const category = CATEGORIES.find(cat => cat.id === categoryId);
   
-  // Get products in this category
-  const categoryProducts = PRODUCTS.filter(product => product.category === categoryId);
+  // Get products in this category from Supabase
+  const { data: categoryProducts = [], isLoading } = useQuery({
+    queryKey: ['products', categoryId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('products')
+        .select('*')
+        .eq('category', categoryId);
+      
+      if (error) throw error;
+      
+      return data.map(product => ({
+        id: product.id,
+        name: product.name,
+        description: product.description || '',
+        price: product.price,
+        imageUrl: product.image_url || '',
+        category: product.category,
+        inStock: product.in_stock,
+        weight: product.weight || '',
+        discount: 0 // Default discount value
+      })) as Product[];
+    },
+    enabled: !!categoryId,
+  });
   
   if (!category) {
     return (
@@ -60,7 +86,13 @@ const CategoryPage = () => {
           </div>
         </div>
         
-        {categoryProducts.length === 0 ? (
+        {isLoading ? (
+          <div className="flex justify-center py-8">
+            <div className="text-center">
+              <p>Loading products...</p>
+            </div>
+          </div>
+        ) : categoryProducts.length === 0 ? (
           <div className="text-center py-12">
             <h2 className="text-2xl font-medium mb-2">No products found</h2>
             <p className="text-muted-foreground mb-6">

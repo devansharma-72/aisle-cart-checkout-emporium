@@ -1,3 +1,4 @@
+
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import MainLayout from "@/components/layout/MainLayout";
@@ -19,10 +20,15 @@ const Index = () => {
       if (error) throw error;
       
       return data.map(product => ({
-        ...product,
-        imageUrl: product.image_url,
+        id: product.id,
+        name: product.name,
+        description: product.description || '',
+        price: product.price,
+        imageUrl: product.image_url || '',
+        category: product.category,
         inStock: product.in_stock,
-        discount: 0 // Add a default discount value
+        weight: product.weight || '',
+        discount: 0 // Default discount value
       })) as Product[];
     }
   });
@@ -59,60 +65,84 @@ const Index = () => {
           </div>
         </section>
         
+        {featuredProducts.length > 0 && (
+          <section className="mt-12">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold">Special Offers</h2>
+              <a href="/offers" className="text-primary hover:underline">
+                View All
+              </a>
+            </div>
+            
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+              {isLoading ? (
+                <p>Loading products...</p>
+              ) : featuredProducts.length > 0 ? (
+                featuredProducts.map((product) => (
+                  <ProductCard key={product.id} product={product} />
+                ))
+              ) : (
+                <p>No special offers available</p>
+              )}
+            </div>
+          </section>
+        )}
+        
         <section className="mt-12">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold">Special Offers</h2>
-            <a href="/offers" className="text-primary hover:underline">
-              View All
-            </a>
+            <h2 className="text-2xl font-bold">All Products</h2>
           </div>
           
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {isLoading ? (
               <p>Loading products...</p>
-            ) : featuredProducts.length > 0 ? (
-              featuredProducts.map((product) => (
+            ) : products.length > 0 ? (
+              products.slice(0, 8).map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))
             ) : (
-              <p>No special offers available</p>
+              <p>No products available</p>
             )}
           </div>
         </section>
         
-        <section className="mt-12">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold">Fresh Fruits & Vegetables</h2>
-            <a href="/category/fruits" className="text-primary hover:underline">
-              View All
-            </a>
-          </div>
-          
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {isLoading ? (
-              <p>Loading products...</p>
-            ) : fruitsAndVegetables.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
-        </section>
+        {fruitsAndVegetables.length > 0 && (
+          <section className="mt-12">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold">Fresh Fruits & Vegetables</h2>
+              <a href="/category/fruits" className="text-primary hover:underline">
+                View All
+              </a>
+            </div>
+            
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {isLoading ? (
+                <p>Loading products...</p>
+              ) : fruitsAndVegetables.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          </section>
+        )}
         
-        <section className="mt-12">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold">Dairy & Bakery</h2>
-            <a href="/category/dairy" className="text-primary hover:underline">
-              View All
-            </a>
-          </div>
-          
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {isLoading ? (
-              <p>Loading products...</p>
-            ) : dairyAndBakery.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
-        </section>
+        {dairyAndBakery.length > 0 && (
+          <section className="mt-12">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold">Dairy & Bakery</h2>
+              <a href="/category/dairy" className="text-primary hover:underline">
+                View All
+              </a>
+            </div>
+            
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {isLoading ? (
+                <p>Loading products...</p>
+              ) : dairyAndBakery.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          </section>
+        )}
       </div>
     </MainLayout>
   );

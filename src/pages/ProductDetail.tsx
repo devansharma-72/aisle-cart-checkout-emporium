@@ -2,12 +2,14 @@
 import React from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import MainLayout from "@/components/layout/MainLayout";
-import { PRODUCTS } from "@/data/mockData";
 import { Button } from "@/components/ui/button";
 import { formatCurrency } from "@/utils/formatCurrency";
 import { useCart } from "@/contexts/CartContext";
 import { Plus, Minus, ShoppingCart } from "lucide-react";
 import ProductCard from "@/components/products/ProductCard";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import type { Product } from "@/types/grocery";
 
 const ProductDetail = () => {
   const { productId } = useParams<{ productId: string }>();
@@ -15,13 +17,60 @@ const ProductDetail = () => {
   const { addToCart } = useCart();
   const [quantity, setQuantity] = React.useState(1);
   
-  // Find the product by ID
-  const product = PRODUCTS.find((p) => p.id === productId);
+  // Fetch the product by ID
+  const { data: product, isLoading: isProductLoading } = useQuery({
+    queryKey: ['product', productId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('products')
+        .select('*')
+        .eq('id', productId)
+        .single();
+      
+      if (error) throw error;
+      
+      return {
+        id: data.id,
+        name: data.name,
+        description: data.description || '',
+        price: data.price,
+        imageUrl: data.image_url || '',
+        category: data.category,
+        inStock: data.in_stock,
+        weight: data.weight || '',
+        discount: 0 // Default discount value
+      } as Product;
+    },
+    enabled: !!productId,
+  });
   
-  // Get related products (same category)
-  const relatedProducts = product 
-    ? PRODUCTS.filter(p => p.category === product.category && p.id !== product.id).slice(0, 4) 
-    : [];
+  // Fetch related products (same category)
+  const { data: relatedProducts = [] } = useQuery({
+    queryKey: ['related-products', product?.category],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('products')
+        .select('*')
+        .eq('category', product?.category)
+        .neq('id', productId)
+        .limit(4);
+      
+      if (error) throw error;
+      
+      return data.map(item => ({
+        id: item.id,
+        name: item.name,
+        description: item.description || '',
+        price: item.price,
+        imageUrl: item.image_url || '',
+        category: item.category,
+        inStock: item.in_stock,
+        weight: item.weight || '',
+        discount: 0 // Default discount value
+      })) as Product[];
+    },
+    enabled: !!product?.category,
+  });
   
   // Handle quantity changes
   const increaseQuantity = () => setQuantity(q => q + 1);
@@ -33,6 +82,16 @@ const ProductDetail = () => {
       addToCart(product, quantity);
     }
   };
+  
+  if (isProductLoading) {
+    return (
+      <MainLayout>
+        <div className="container mx-auto px-4 py-8 text-center">
+          <p>Loading product details...</p>
+        </div>
+      </MainLayout>
+    );
+  }
   
   if (!product) {
     return (
