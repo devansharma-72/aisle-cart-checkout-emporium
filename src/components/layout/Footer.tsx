@@ -6,7 +6,7 @@ const Footer: React.FC = () => {
   return (
     <footer className="bg-white border-t">
       <div className="container mx-auto px-4 py-8 md:py-12">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-8">
           <div className="col-span-2 md:col-span-1">
             <h3 className="font-bold text-lg mb-4 text-grocery-600">FreshMart</h3>
             <p className="text-sm text-muted-foreground mb-4">
@@ -31,14 +31,6 @@ const Footer: React.FC = () => {
               <li><Link to="/contact" className="text-muted-foreground hover:text-primary">Contact</Link></li>
               <li><Link to="/faq" className="text-muted-foreground hover:text-primary">FAQ</Link></li>
               <li><Link to="/privacy" className="text-muted-foreground hover:text-primary">Privacy Policy</Link></li>
-            </ul>
-          </div>
-          
-          <div>
-            <h4 className="font-medium mb-4">Account</h4>
-            <ul className="space-y-2 text-sm">
-              <li><Link to="/profile" className="text-muted-foreground hover:text-primary">My Profile</Link></li>
-              <li><Link to="/checkout" className="text-muted-foreground hover:text-primary">Checkout</Link></li>
             </ul>
           </div>
         </div>

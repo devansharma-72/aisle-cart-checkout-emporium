@@ -1,21 +1,41 @@
-
 import React from "react";
+import { useQuery } from "@tanstack/react-query";
 import MainLayout from "@/components/layout/MainLayout";
 import HeroBanner from "@/components/home/HeroBanner";
 import ProductCard from "@/components/products/ProductCard";
 import CategoryCard from "@/components/categories/CategoryCard";
-import { PRODUCTS, CATEGORIES } from "@/data/mockData";
+import { CATEGORIES } from "@/data/mockData";
+import { supabase } from "@/integrations/supabase/client";
+import type { Product } from "@/types/grocery";
 
 const Index = () => {
+  const { data: products = [], isLoading } = useQuery({
+    queryKey: ['products'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('products')
+        .select('*');
+      
+      if (error) throw error;
+      
+      return data.map(product => ({
+        ...product,
+        imageUrl: product.image_url,
+        inStock: product.in_stock,
+        discount: 0 // Add a default discount value
+      })) as Product[];
+    }
+  });
+  
   // Get featured products (those with a discount)
-  const featuredProducts = PRODUCTS.filter(product => product.discount > 0);
+  const featuredProducts = products.filter(product => product.discount > 0);
   
   // Get some products from different categories
-  const fruitsAndVegetables = PRODUCTS.filter(
+  const fruitsAndVegetables = products.filter(
     product => product.category === "fruits" || product.category === "vegetables"
   ).slice(0, 4);
   
-  const dairyAndBakery = PRODUCTS.filter(
+  const dairyAndBakery = products.filter(
     product => product.category === "dairy" || product.category === "bakery"
   ).slice(0, 4);
   
@@ -48,9 +68,15 @@ const Index = () => {
           </div>
           
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-            {featuredProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
+            {isLoading ? (
+              <p>Loading products...</p>
+            ) : featuredProducts.length > 0 ? (
+              featuredProducts.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))
+            ) : (
+              <p>No special offers available</p>
+            )}
           </div>
         </section>
         
@@ -63,7 +89,9 @@ const Index = () => {
           </div>
           
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {fruitsAndVegetables.map((product) => (
+            {isLoading ? (
+              <p>Loading products...</p>
+            ) : fruitsAndVegetables.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
           </div>
@@ -78,7 +106,9 @@ const Index = () => {
           </div>
           
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {dairyAndBakery.map((product) => (
+            {isLoading ? (
+              <p>Loading products...</p>
+            ) : dairyAndBakery.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
           </div>
